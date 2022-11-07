@@ -4,7 +4,8 @@ Se necesita que esté en una misma carpeta el Dockerfile y la carpeta turtlebot2
 - El docker tiene como base Ubuntu 22.04 e incluye ros2 humble y Gazebo 11
 
 ## Modo de uso
-Para crear la imagen
+Para crear la imagen 
+- el nombre "turtlebot2" es de ejemplo, se puede cambiar por otro cualquiera
 ~~~
 $ sudo docker build -t turtlebot2 .
 ~~~
