@@ -11,7 +11,7 @@ Para crear la imagen (base nvidia con ubuntu 22.04)
 
 Para crear el contenedor
 ~~~
-sudo docker run --gpus all --rm -it -p 5900:5900 -p 6081:6080 turtlebot2
+sudo docker run --gpus all --rm -it -p 6080:6080 turtlebot2
 ~~~
 o también puedes hacer
 ~~~
