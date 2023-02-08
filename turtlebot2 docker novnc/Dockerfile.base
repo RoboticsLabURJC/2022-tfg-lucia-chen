@@ -62,10 +62,15 @@ RUN apt-get update && apt-get install -y \
 # Install Gazebo 11
 RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg \
   && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null \
+  && sudo rosdep fix-permissions \
   && rosdep update \
   && apt-get update && apt-get install -q -y \
     ros-${ROS_DISTRO}-gazebo* \
   && rm -rf /var/lib/apt/lists/*
+
+# websocket server dependency
+RUN pip3 install websocket_server posix-ipc django djangorestframework==3.13.1 django-webpack-loader==1.5.0
+RUN python3.10 -m pip install websockets asyncio
 
 # pip install dependencies
 RUN pip install pylint
