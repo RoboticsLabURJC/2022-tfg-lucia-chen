@@ -21,6 +21,14 @@ COPY empty_world_robot /home/turtlebot2_ws
 RUN mkdir -p /home/follow_person
 COPY ./follow_person/web-template /home/follow_person
 
+# A simple camera subscriber to make a test with the fourth display
+RUN mkdir -p /home/camera_ws/src/camera_sub
+COPY ./camera_sub /home/camera_ws/src/camera_sub
+WORKDIR /home/camera_ws
+RUN rosdep install --from-paths src --ignore-src -r -y
+RUN colcon build
+
+
 # files to run xserver, vnc and novnc
 COPY xserver.sh /
 COPY vnc_novnc.sh /
