@@ -15,7 +15,6 @@ import logging
 
 from interfaces.pose3d import ListenerPose3d
 from shared.image import SharedImage
-from shared.image import SharedImage
 from shared.value import SharedValue
 
 from lap import Lap
@@ -265,5 +264,6 @@ class ProcessGUI(multiprocessing.Process):
 
 
 if __name__ == "__main__":
+    print("GUI ----------------------------------")
     gui = ProcessGUI()
     gui.start()

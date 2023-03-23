@@ -46,13 +46,13 @@ class HAL:
     # Get Image from ROS Driver Camera
     def getImage(self):
         try:
-            rclpy.spin_once(self.camera)
+            #rclpy.spin_once(self.camera)
             image = self.camera.getImage().data
-            # image = self._get_test_image()
-            # print(f"HAL image set, shape: {image.shape}, bytes: {image.nbytes}", flush=True)
+            #image = self._get_test_image()
+            #print(f"HAL image set, shape: {image.shape}, bytes: {image.nbytes}", flush=True)
             self.shared_image.add(image)
         except Exception as e:
-            print(f"Exception in hal getImage {repr(e)}")
+            print(f"3 Exception in hal getImage {repr(e)}")
 
     def _get_test_image(self):
         image = np.zeros((640, 480, 3), np.uint8)
@@ -73,11 +73,6 @@ class HAL:
 
         return image
 
-    # Set the velocity
-    def setV(self):
-        velocity = self.shared_v.get()
-        self.motors.sendV(velocity)
-
     # Get the velocity
     def getV(self):
         velocity = self.shared_v.get()
@@ -88,9 +83,17 @@ class HAL:
         angular = self.shared_w.get()
         return angular
 
+
+    # Set the velocity
+    def setV(self):
+        velocity = self.shared_v.get()
+        #print("velocity = " + str(velocity))
+        self.motors.sendV(velocity)
+
     # Set the angular velocity
     def setW(self):
         angular = self.shared_w.get()
+        #print("angular = " + str(angular))
         self.motors.sendW(angular)
 
     def update_hal(self):

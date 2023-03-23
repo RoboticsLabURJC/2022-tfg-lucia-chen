@@ -33,7 +33,7 @@ def generate_launch_description():
     description="Position on the axis z of Turtlebot2"
   )
 
-  world_path = "/RoboticsAcademy/exercises/static/exercises/follow_line_newmanager_ros2/web-template/launch/prototype_f1_circuit_game_headless_default.world"
+  world_path = "/RoboticsAcademy/exercises/static/exercises/follow_line_newmanager/web-template/launch/prototype_f1_circuit_game_headless_default.world"
   
   ########### YOU DO NOT NEED TO CHANGE ANYTHING BELOW THIS LINE ##############  
   # Launch configuration variables specific to simulation

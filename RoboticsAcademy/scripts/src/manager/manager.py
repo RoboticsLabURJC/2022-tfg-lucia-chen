@@ -97,8 +97,8 @@ class Manager:
         # generate exercise_folder environment variable
 
         # TODO: change configuration
-        #self.exercise_id = configuration['exercise_id']
-        self.exercise_id = configuration['exercise_id'] + '_ros2'
+        self.exercise_id = configuration['exercise_id']
+        #self.exercise_id = configuration['exercise_id'] + '_ros2'
         os.environ["EXERCISE_FOLDER"] = f"{os.environ.get('EXERCISES_STATIC_FILES')}/{self.exercise_id}"
 
         # Check if application and launchers configuration is missing

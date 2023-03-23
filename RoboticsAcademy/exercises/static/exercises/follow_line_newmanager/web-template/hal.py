@@ -48,7 +48,7 @@ class HAL:
             # print(f"HAL image set, shape: {image.shape}, bytes: {image.nbytes}", flush=True)
             self.shared_image.add(image)
         except Exception as e:
-            print(f"Exception in hal getImage {repr(e)}")
+            print(f"1 Exception in hal getImage {repr(e)}")
 
     def _get_test_image(self):
         image = np.zeros((640, 480, 3), np.uint8)

@@ -37,7 +37,12 @@ COPY ./.env /.env
 COPY ./scripts/web_template_turtlebot /RoboticsAcademy/exercises/static/exercises/turtlebot2/web-template
 
 # Create exercise file for followline ROS2
-COPY ./scripts/followline_ros2 /RoboticsAcademy/exercises/static/exercises/follow_line_newmanager_ros2/web-template
+RUN rm -rf /RoboticsAcademy/exercises/static/exercises/follow_line_newmanager
+COPY ./scripts/followline_ros2 /RoboticsAcademy/exercises/static/exercises/follow_line_newmanager/web-template
+
+# Create exercise file for Follo2 Person ROS2
+COPY ./scripts/follow_person /RoboticsAcademy/exercises/static/exercises/follow_person
+
 
 # compile workspace
 WORKDIR /home/ws
