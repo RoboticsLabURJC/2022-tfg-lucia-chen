@@ -34,7 +34,6 @@ RUN mkdir -p /opt/jderobots && cd /opt/jderobots && \
 
 # Repo de sustitución a la de JdeRobot por tmp *******
 RUN git clone -b RR https://github.com/RoboticsLabURJC/2022-tfg-lucia-chen.git
-
 RUN mkdir -p /opt/jderobots && cd /opt/jderobots && \ 
 	cp 2022-tfg-lucia-chen/RoboticsAcademy /RoboticsAcademy
 
