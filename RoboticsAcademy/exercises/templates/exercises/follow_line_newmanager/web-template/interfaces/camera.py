@@ -1,5 +1,4 @@
-import rclpy
-from rclpy.node import Node
+import rospy
 from sensor_msgs.msg import Image as ImageROS
 import threading
 from math import pi as PI
@@ -17,7 +16,7 @@ def imageMsg2Image(img, bridge):
     image.width = img.width
     image.height = img.height
     image.format = "BGR8"
-    image.timeStamp = img.header.stamp.sec + (img.header.stamp.nanosec *1e-9)
+    image.timeStamp = img.header.stamp.secs + (img.header.stamp.nsecs *1e-9)
     cv_image=0
     if (img.encoding[-2:] == "C1"):
         gray_img_buff = bridge.imgmsg_to_cv2(img, img.encoding)
@@ -34,8 +33,8 @@ class Image:
 
     def __init__(self):
 
-        self.height = 3  # Image height [pixels]
-        self.width = 3  # Image width [pixels]
+        self.height = 480  # Image height [pixels]
+        self.width = 640  # Image width [pixels]
         self.timeStamp = 0 # Time stamp [s] */
         self.format = "" # Image format string (RGB8, BGR,...)
         self.data = np.zeros((self.height, self.width, 3), np.uint8) # The image data itself
@@ -49,10 +48,9 @@ class Image:
         return s 
 
 
-class ListenerCamera(Node):
+class ListenerCamera:
  
     def __init__(self, topic):
-        super().__init__("camera_subscriber_node")
         
         self.topic = topic
         self.data = Image()
@@ -74,8 +72,8 @@ class ListenerCamera(Node):
 
         self.sub.unregister()
 
-    def start (self):
-        self.sub = self.create_subscription(ImageROS, self.topic, self.__callback, 10)
+    def start(self):
+        self.sub = rospy.Subscriber(self.topic, ImageROS, self.__callback)
         
     def getImage(self):
         
@@ -86,5 +84,6 @@ class ListenerCamera(Node):
         return image
 
     def hasproxy (self):
-
         return hasattr(self,"sub") and self.sub
+
+
