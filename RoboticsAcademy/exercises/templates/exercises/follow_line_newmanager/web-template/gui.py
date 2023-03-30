@@ -1,7 +1,7 @@
 import json
 import os
 
-import rclpy
+import rospy
 import cv2
 import sys
 import base64
@@ -26,8 +26,7 @@ class GUI:
     # Initialization function
     # The actual initialization
     def __init__(self, host, circuit):
-        rclpy.init()
-        rclpy.create_node('GUI')
+        rospy.init_node("GUI")
 
         self.payload = {'image': '','lap': '', 'map': '', 'v':'','w':''}
         self.server = None
@@ -46,9 +45,13 @@ class GUI:
         self.shared_w = SharedValue("angular")
         
         # Create the lap object
-        pose3d_object = ListenerPose3d("/odom")
+        pose3d_object = ListenerPose3d("/F1ROS/odom")
         self.lap = Lap(pose3d_object)
         self.map = Map(pose3d_object, self.circuit)
+        # Guest Position
+        pose3d_object_guest = ListenerPose3d("/F1ROSGuest/odom")
+        self.lap_guest = Lap(pose3d_object_guest)
+        self.map_guest = Map(pose3d_object_guest, self.circuit)
 
         # Event objects for multiprocessing
         self.ack_event = multiprocessing.Event()
@@ -70,7 +73,7 @@ class GUI:
         
         payload['image'] = encoded_image.decode('utf-8')
         payload['shape'] = shape
-
+        
         return payload
 
     # Function for student to call
@@ -103,6 +106,10 @@ class GUI:
         # Payload Map Message
         pos_message = str(self.map.getFormulaCoordinates())
         self.payload["map"] = pos_message
+        
+        # Payload Map Message Guest
+        pos_message_guest = str(self.map_guest.getFormulaCoordinates())
+        self.payload["map_guest"] = pos_message_guest
 
         # Payload V Message
         v_message = str(self.shared_v.get())

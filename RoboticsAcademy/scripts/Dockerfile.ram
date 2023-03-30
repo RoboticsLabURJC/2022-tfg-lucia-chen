@@ -2,7 +2,6 @@ FROM humble_base
 
 # Turtlebot2 simulated and hospital world
 RUN mkdir -p /home/ws/src
-COPY ./turtlebot2 /home/ws/src/
 COPY ./worlds /home/ws/src/
 COPY ./display_conf /home/.display_conf
 
@@ -11,38 +10,35 @@ COPY ./src /src
 COPY ./src/manager/manager.py /
 
 # copy scripts for vnc displays
-COPY ./scripts/start_vnc.sh /
-COPY ./scripts/kill_all.sh /
-COPY ./scripts/start_4windows.sh /
-COPY ./scripts/start_console.sh /
-COPY ./scripts/entrypoint.sh /
+COPY ./start_vnc.sh /
+COPY ./kill_all.sh /
+COPY ./start_4windows.sh /
+COPY ./start_console.sh /
+COPY ./entrypoint.sh /
+
+# environment 
+COPY ./.env /.env
 
 # give permission if it is not already done
 RUN chmod +x /start_vnc.sh /kill_all.sh /start_console.sh /start_4windows.sh /entrypoint.sh /manager.py
 
 # configure setup.bash
-RUN echo 'source /home/ws/install/setup.bash' >> ~/.bashrc
-RUN echo 'export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/ws/install/kobuki_description/share' >> ~/.bashrc
-RUN echo 'source /usr/share/gazebo/setup.bash' >> ~/.bashrc
+#RUN echo 'source /home/ws/install/setup.bash' >> ~/.bashrc
+#RUN echo 'export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/home/ws/install/kobuki_description/share' >> ~/.bashrc
+#RUN echo 'source /usr/share/gazebo/setup.bash' >> ~/.bashrc
 
-# RoboticsAcademy
-RUN cd /  && git clone https://github.com/JdeRobot/RoboticsAcademy.git -b master
 # Custom Robot Repository
 RUN mkdir -p /opt/jderobots && cd /opt/jderobots && \
 	git clone -b $ROS_DISTRO-devel https://github.com/JdeRobot/CustomRobots.git
-# environment 
-COPY ./.env /.env
 
-# Create exercise file for turtlebot ROS2
-COPY ./scripts/web_template_turtlebot /RoboticsAcademy/exercises/static/exercises/turtlebot2/web-template
 
-# Create exercise file for followline ROS2
-RUN rm -rf /RoboticsAcademy/exercises/static/exercises/follow_line_newmanager
-COPY ./scripts/followline_ros2 /RoboticsAcademy/exercises/static/exercises/follow_line_newmanager/web-template
+# Repo de sustitución a la de JdeRobot por tmp *******
+RUN git clone -b RR https://github.com/RoboticsLabURJC/2022-tfg-lucia-chen.git
+RUN mkdir -p /opt/jderobots && cd /opt/jderobots && \ 
+	cp 2022-tfg-lucia-chen/RoboticsAcademy /RoboticsAcademy
 
-# Create exercise file for Follo2 Person ROS2
-COPY ./scripts/follow_person /RoboticsAcademy/exercises/static/exercises/follow_person
-
+# RoboticsAcademy
+#RUN cd /  && git clone https://github.com/JdeRobot/RoboticsAcademy.git -b master
 
 # compile workspace
 WORKDIR /home/ws

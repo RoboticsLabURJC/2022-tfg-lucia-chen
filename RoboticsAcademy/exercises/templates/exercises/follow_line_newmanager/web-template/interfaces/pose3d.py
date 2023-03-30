@@ -1,4 +1,4 @@
-import rclpy
+import rospy
 import threading
 from math import asin, atan2, pi
 from nav_msgs.msg import Odometry
@@ -86,7 +86,7 @@ def odometry2Pose3D(odom):
     pose.pitch = quat2Pitch(ori.w, ori.x, ori.y, ori.z)
     pose.roll = quat2Roll(ori.w, ori.x, ori.y, ori.z)
     pose.q = [ori.w, ori.x, ori.y, ori.z]
-    pose.timeStamp = odom.header.stamp.sec + (odom.header.stamp.nanosec *1e-9)
+    pose.timeStamp = odom.header.stamp.secs + (odom.header.stamp.nsecs *1e-9)
 
     return pose
     
@@ -126,7 +126,6 @@ class ListenerPose3d:
         @type topic: String
 
         '''
-        self.node = rclpy.create_node('ListenerPose3d')
         self.topic = topic
         self.data = Pose3d()
         self.sub = None
@@ -160,8 +159,7 @@ class ListenerPose3d:
         Starts (Subscribes) the client.
 
         '''
-        self.sub = self.node.create_subscription(Odometry, self.topic, self.__callback,10)
-
+        self.sub = rospy.Subscriber(self.topic, Odometry, self.__callback)
         
     def getPose3d(self):
         '''

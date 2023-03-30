@@ -7,10 +7,6 @@ import re
 import json
 import importlib
 
-import rospy
-from std_srvs.srv import Empty
-import cv2
-
 from user_functions import GUIFunctions, HALFunctions
 from console import start_console, close_console
 
@@ -18,11 +14,12 @@ from shared.value import SharedValue
 
 # The brain process class
 class BrainProcess(multiprocessing.Process):
-    def __init__(self, code, exit_signal):
+    def __init__(self, code, exit_signal, stop_signal):
         super(BrainProcess, self).__init__()
 
         # Initialize exit signal
         self.exit_signal = exit_signal
+        self.stop_signal = stop_signal
 
         # Function definitions for users to use
         self.hal = HALFunctions()
@@ -60,24 +57,25 @@ class BrainProcess(multiprocessing.Process):
         # Reference Environment for the exec() function
         iterative_code, sequential_code = self.iterative_code, self.sequential_code
 
-        print("APpyyyy debug", flush=True)
-        # print(iterative_code)
-
         # Whatever the code is, first step is to just stop!
         self.hal.sendV(0)
         self.hal.sendW(0)
 
-
         # The Python exec function
         # Run the sequential part
         gui_module, hal_module = self.generate_modules()
+        reference_environment = {"GUI": gui_module, "HAL": hal_module}
         if sequential_code != "":
-            reference_environment = {"GUI": gui_module, "HAL": hal_module}
             exec(sequential_code, reference_environment)
 
         # Run the iterative part inside template
         # and keep the check for flag
         while not self.exit_signal.is_set():
+            while (self.stop_signal.is_set()):
+                if (self.exit_signal.is_set()):
+                    break
+                time.sleep(0.1)
+
             start_time = datetime.now()
 
             # Execute the iterative portion
@@ -99,13 +97,11 @@ class BrainProcess(multiprocessing.Process):
             # If it's less put to sleep
             # If it's more no problem as such, but we can change it!
             time_cycle = self.time_cycle.get()
-
             if(ms < time_cycle):
                 time.sleep((time_cycle - ms) / 1000.0)
 
         close_console()
         print("Current Thread Joined!", flush=True)
-
 
     # Function to generate the modules for use in ACE Editor
     def generate_modules(self):
@@ -151,9 +147,9 @@ class BrainProcess(multiprocessing.Process):
             # Get the time period
             try:
             	# Division by zero
-            	self.ideal_cycle.add(ms / self.iteration_counter)
+                self.ideal_cycle.add(ms / self.iteration_counter)
             except:
-            	self.ideal_cycle.add(0)
-
+                self.ideal_cycle.add(0)
+            
             # Reset the counter
             self.iteration_counter = 0

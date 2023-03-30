@@ -12,6 +12,10 @@ import re
 import json
 import importlib
 
+import rospy
+from std_srvs.srv import Empty
+import cv2
+
 from shared.value import SharedValue
 
 from hal import HAL
@@ -29,8 +33,6 @@ class Template:
         print("Exercise initializing", flush=True)
         self.brain_process = None
         self.reload = multiprocessing.Event()
-        self.stop_brain = multiprocessing.Event()
-        self.user_code = ""
 
         # Time variables
         self.brain_time_cycle = SharedValue('brain_time_cycle')
@@ -53,7 +55,7 @@ class Template:
         self.exit_signal_teleop = threading.Event()
         self.teleop_q = queue.Queue()
         self.teleop = TeleopThread(self.teleop_q,self.exit_signal_teleop,self.hal)
-
+        self.paused = False
         print("Exercise initialized", flush=True)
 
     # Function for saving
@@ -77,6 +79,7 @@ class Template:
         if(source_code[:5] == "#save"):
             source_code = source_code[5:]
             self.save_code(source_code)
+
             return "", ""
 
         elif(source_code[:5] == "#load"):
@@ -129,14 +132,13 @@ class Template:
                 pass
 
         # Turn the flag down, the iteration has successfully stopped!
-        
         self.reload.clear()
         # New thread execution
         code = self.parse_code(source_code)
         if code[0] == "" and code[1] == "":
             return
 
-        self.brain_process = BrainProcess(code, self.reload, self.stop_brain)
+        self.brain_process = BrainProcess(code, self.reload)
         self.brain_process.start()
         self.send_code_message()
 
@@ -214,18 +216,24 @@ class Template:
         if(message[:5] == "#freq"):
             frequency_message = message[5:]
             self.read_frequency_message(frequency_message)
+            time.sleep(1)
             self.send_frequency_message()
             return
-        
         elif(message[:5] == "#ping"):
+            time.sleep(1)
             self.send_ping_message()
             return
-        
         elif(message[:5] == "#tele"):
             # Stop Brain code by sending an empty code
-            if not self.stop_brain.is_set():
+            if not self.paused:
                 self.reload.set()
-                self.stop_brain.set()
+                self.execute_thread("""from GUI import GUI
+from HAL import HAL
+# Enter sequential code!
+
+while True:
+    # Enter iterative code!""")
+                self.paused = True
                 
             # Parse message
             teleop_message = message[5:]
@@ -245,38 +253,41 @@ class Template:
             self.teleop_q.put({"v":v,"w":w})
             return
 
-        elif (message[:5] == "#code"):
+        elif (message[:5] == "#code"):  
             try:
                 # First pause the teleoperator thread if exists
                 if self.teleop.is_alive():
                     self.exit_signal_teleop.set()
+                
+                self.paused = False
 
                 # Once received turn the reload flag up and send it to execute_thread function
-                self.user_code = message
+                code = message
+                # print(repr(code))
                 self.reload.set()
-                self.stop_brain.clear()
-                self.execute_thread(self.user_code)
+                self.execute_thread(code)
             except:
                 pass
 
         elif (message[:5] == "#stop"):
-            self.stop_brain.set()
+            try:
+                self.reload.set()
+                self.execute_thread("""from GUI import GUI
+from HAL import HAL
+# Enter sequential code!
+
+while True:
+    # Enter iterative code!""")
+                self.paused = True
+            except:
+                pass
             self.server.send_message(self.client, "#stpd")
-
-        elif (message[:5] == "#play"):
-            self.stop_brain.clear()
-
-        elif (message[:5] == "#rest"):
-            self.reload.set()
-            self.stop_brain.clear()
-            self.execute_thread(self.user_code)
 
     # Function that gets called when the server is connected
     def connected(self, client, server):
         self.client = client
         # Start the HAL update thread
-        message ="#strt" +json.dumps("Starting HAL thread")
-        self.server.send_message(self.client, message)
+        self.server.send_message(self.client, "Starting HAL thread")
         self.hal.start_thread()
 
         # Start real time factor tracker thread
@@ -285,8 +296,8 @@ class Template:
 
         # Initialize the ping message
         self.send_frequency_message()
-        
-        print(client, 'connected')
+        self.server.send_message(self.client, "Client connected")
+        print("Client connected", flush=True)
 
     # Function that gets called when the connected closes
     def handle_close(self, client, server):

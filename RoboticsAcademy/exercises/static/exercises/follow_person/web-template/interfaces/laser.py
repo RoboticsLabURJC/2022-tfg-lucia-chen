@@ -31,13 +31,9 @@ class LaserData ():
 def laserScan2LaserData(scan):
     '''
     Translates from ROS LaserScan to JderobotTypes LaserData. 
-
     @param scan: ROS LaserScan to translate
-
     @type scan: LaserScan
-
     @return a LaserData translated from scan
-
     '''
     laser = LaserData()
     laser.values = scan.ranges
@@ -64,11 +60,9 @@ class ListenerLaser(Node):
     def __init__(self, topic):
         '''
         ListenerLaser Constructor.
-
         @param topic: ROS topic to subscribe
         
         @type topic: String
-
         '''
         super().__init__("laser_subscriber_node")
         self.topic = topic
@@ -80,11 +74,9 @@ class ListenerLaser(Node):
     def __callback (self, scan):
         '''
         Callback function to receive and save Laser Scans. 
-
         @param scan: ROS LaserScan received
         
         @type scan: LaserScan
-
         '''
         laser = laserScan2LaserData(scan)
 
@@ -95,23 +87,19 @@ class ListenerLaser(Node):
     def stop(self):
         '''
         Stops (Unregisters) the client.
-
         '''
         self.sub.unregister()
 
     def start (self):
         '''
         Starts (Subscribes) the client.
-
         '''
         self.sub = self.create_subscription(LaserScan, self.topic, self.__callback, 10)
         
     def getLaserData(self):
         '''
         Returns last LaserData. 
-
         @return last JdeRobotTypes LaserData saved
-
         '''
         self.lock.acquire()
         laser = self.data
