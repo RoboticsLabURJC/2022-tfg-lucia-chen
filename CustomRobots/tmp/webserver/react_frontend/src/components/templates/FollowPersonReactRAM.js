@@ -7,7 +7,6 @@ import MainAppBar from "../common/MainAppBar";
 import View from "../common/View";
 import { THEORY_URL } from "../../helpers/TheoryUrlGetter";
 import RAMFollowPersonExerciseView from "../views/RAM/RAMFollowPersonExerciseView";
-import CircuitSelector from "../buttons/RAM/RAMExerciseConfiguration";
 
 function FollowPersonReactRAM() {
   return (
@@ -16,7 +15,6 @@ function FollowPersonReactRAM() {
         <ExerciseProvider>
           <MainAppBar
             exerciseName={" Follow Person RR"}
-            specificConfiguration={<CircuitSelector></CircuitSelector>}
           />
           <View
             url={THEORY_URL.FollowPerson}

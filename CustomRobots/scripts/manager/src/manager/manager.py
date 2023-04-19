@@ -53,8 +53,8 @@ class Manager:
         # Global transitions
         {'trigger': 'disconnect', 'source': '*',
             'dest': 'idle', 'before': 'on_disconnect'},
-
     ]
+    print("\n******* [0] MANAGER \n")       # BORRAR
 
     def __init__(self, host: str, port: int):
         self.__code_loaded = False
@@ -68,9 +68,9 @@ class Manager:
         self.consumer = ManagerConsumer(host, port, self.queue)
         self.launcher = None
         self.application: IRoboticsPythonApplication = None
+        print("\n******* [init]  Consumer: " + str(self.consumer) + "\n")       # BORRAR
 
     def state_change(self, event):
-
         LogManager.logger.info(f"State changed to {self.state}")
         if self.consumer is not None:
             self.consumer.send_message(
@@ -82,6 +82,7 @@ class Manager:
             self.consumer.send_message({'update': data}, command="update")
 
     def on_launch(self, event):
+        print("\n******* [1] ON LAUNCH \n")       # BORRAR
         """
         Transition executed on launch trigger activ
         """
@@ -113,8 +114,10 @@ class Manager:
 
         LogManager.logger.info(f"Launch transition started, configuration: {configuration}")
 
+        
         #configuration['terminated_callback'] = terminated_callback
         self.launcher = LauncherEngine(**configuration)
+        print("\n******* [on_launch] self.launcher: " + str(self.launcher) + "\n")       # BORRAR
         self.launcher.run()
 
         # TODO: launch application
@@ -167,15 +170,19 @@ class Manager:
     def on_run(self, event):
         if self.code_loaded:
             self.application.run()
+            pass
 
     def on_pause(self, msg):
         self.application.pause()
+        pass
 
     def on_resume(self, msg):
         self.application.resume()
+        pass
 
     def on_stop(self, msg):
         self.application.stop()
+        pass
 
     def on_disconnect(self, event):
         try:
@@ -202,6 +209,7 @@ class Manager:
                     time.sleep(0.1)
                 else:
                     message = self.queue.get()
+                    print("\n******* [1] MESSAGE: " + str(message) + "\n")       # BORRAR
                     self.process_messsage(message)
             except Exception as e:
                 if message is not None:

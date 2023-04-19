@@ -15,9 +15,12 @@ class LauncherEngine(BaseModel):
 
     def run(self):
         keys = sorted(self.launch.keys())
+        print("\n******* [launch engine] keys: " + str(keys) + "\n")       # BORRAR
         for key in keys:
             launcher_data = self.launch[key]
             launcher_type = launcher_data['type']
+            print("******* [launch engine] key: " + str(launcher_data))       # BORRAR
+            print("---1--- [launch engine] type: " + str(launcher_type))       # BORRAR
 
             # extend launcher data with
             # TODO: Review, maybe there's a better way to do this
@@ -50,6 +53,10 @@ class LauncherEngine(BaseModel):
         launcher_module = f"{self.module}.launcher_{launcher_module_name}.Launcher{class_from_module(launcher_module_name)}"
         launcher_class = get_class(launcher_module)
         launcher = launcher_class.from_config(launcher_class, configuration)
+        print("---2--- [launch module] launcher_module_name: " + str(launcher_module_name))       # BORRAR
+        print("---3--- [launch module] launcher_module: " + str(launcher_module))       # BORRAR
+        print("---4--- [launch module] launcher_class: " + str(launcher_class))       # BORRAR
+        print("---5--- [launch module] launcher: " + str(launcher) + "\n")       # BORRAR
         launcher.run(process_terminated)
         return launcher
 

@@ -13,9 +13,9 @@
       "name": "css/exercise.css",
       "path": "/home/lucia/humble_ws/CustomRobots/tmp/webserver/react_frontend/static/react_frontend/css/exercise.css"
     },
-    "js/exercise.7529af25.js": {
-      "name": "js/exercise.7529af25.js",
-      "path": "/home/lucia/humble_ws/CustomRobots/tmp/webserver/react_frontend/static/react_frontend/js/exercise.7529af25.js"
+    "js/exercise.3949a770.js": {
+      "name": "js/exercise.3949a770.js",
+      "path": "/home/lucia/humble_ws/CustomRobots/tmp/webserver/react_frontend/static/react_frontend/js/exercise.3949a770.js"
     },
     "css/exercises_static_exercises_follow_line_newmanager_web-template_react-components_Test2Exercise-4d63b4.css": {
       "name": "css/exercises_static_exercises_follow_line_newmanager_web-template_react-components_Test2Exercise-4d63b4.css",
@@ -89,7 +89,7 @@
     ],
     "exercise": [
       "css/exercise.css",
-      "js/exercise.7529af25.js"
+      "js/exercise.3949a770.js"
     ]
   }
 }

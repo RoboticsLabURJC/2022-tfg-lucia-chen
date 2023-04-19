@@ -14,6 +14,7 @@ from interfaces.pose3d import ListenerPose3d
 
 from shared.image import SharedImage
 from shared.value import SharedValue
+from shared.laserdata import SharedLaserData
 
 # Hardware Abstraction Layer
 
@@ -31,10 +32,7 @@ class HAL:
         self.shared_image = SharedImage("halimage")
         self.shared_v = SharedValue("velocity")
         self.shared_w = SharedValue("angular")
-        self.shared_laserdata = []
-        for i in range(360):
-            name = "laserdata" + str(i)
-            self.shared_laserdata.append(SharedValue(name))
+        self.shared_laserdata = SharedLaserData("laserdata")
 
         # ROS Topics
         self.motors = PublisherMotors("/cmd_vel", 4, 0.3)
@@ -58,8 +56,7 @@ class HAL:
         try:
             rclpy.spin_once(self.laser)
             values = self.laser.getLaserData().values
-            for i in range(360):
-                self.shared_laserdata[i].add(values[i])
+            self.shared_laserdata.add(values)
         except Exception as e:
             print(f"Exception in hal getImage {repr(e)}")
 
