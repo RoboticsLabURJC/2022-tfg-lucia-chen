@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Ejemplo cliente de WebSocket</title>
+</head>
+
+<body>
+
+    <!-- Nuevo Mensaje -->
+    <input type="text" id="nuevo-mensaje">
+
+    <!-- Mensajes recibidos -->
+    <div id="respuestas"></div>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:8765');
+        const miNuevoMensaje = document.querySelector("#nuevo-mensaje");
+        const misRespuestas = document.querySelector("#respuestas");
+
+        socket.onopen = function (e) {
+            console.log('Conexión establecida ...');
+            socket.send("Hola servidor!");
+
+        };
+
+        socket.onmessage = async function (event) {
+            console.log('Mensaje recibido: %s', event.data);
+            const mensajeRecibido = await event.data; // Arreglo para Node ya que devuelve Blob. Solo con "evento.data" debería ser suficiente
+            misRespuestas.innerHTML = misRespuestas.innerHTML.concat(mensajeRecibido, "<br>");
+
+        };
+
+        socket.onclose = function (event) {
+            if (event.wasClean) {
+                console.log('Conexión cerrada limpiamente, código=%s motivo=%s', event.code, event.reason);
+            } else {
+                // ej. El proceso del servidor se detuvo o la red está caída
+                // event.code es usualmente 1006 en este caso
+                console.log('La conexión se cayó!');
+            }
+        };
+
+        socket.onerror = function (error) {
+            console.log('%s', error);
+        };
+
+        function enviarNuevoMensaje(event) {
+            if (event.code === "KeyS") {
+                socket.send("#key_s");
+            } else if (event.code === "KeyW") {
+                socket.send("#key_w");
+            } else if (event.code === "KeyA") {
+                socket.send("#key_a");
+            } else if (event.code === "KeyD") {
+                socket.send("#key_d");
+            } else if (event.code === "Enter") {
+                socket.send(miNuevoMensaje.value);
+                miNuevoMensaje.value = "";
+            }
+        }
+
+        window.addEventListener("keypress", enviarNuevoMensaje);
+
+    </script>
+</body>
+
+</html>
